@@ -1,36 +1,42 @@
 package BankingSystem.DAOClasses;
-import BankingSystem.Account;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import BankingSystem.Entities.Account;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import java.util.List;
 
 public class AccountDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final Session session;
 
-    @Transactional
+    public AccountDAO(Session session) {
+        this.session = session;
+    }
+
     public void save(Account account) {
-        entityManager.persist(account);
+        Transaction transaction = session.beginTransaction();
+        session.save(account);
+        transaction.commit();
     }
 
     public Account getById(int id) {
-        return entityManager.find(Account.class, id);
+        return session.get(Account.class, id);
     }
 
     public List<Account> getAll() {
-        return entityManager.createQuery("SELECT a FROM Account a", Account.class).getResultList();
+        return session.createQuery("SELECT a FROM Account a", Account.class).getResultList();
     }
 
-    @Transactional
     public void update(Account account) {
-        entityManager.merge(account);
+        Transaction transaction = session.beginTransaction();
+        session.update(account);
+        transaction.commit();
     }
 
-    @Transactional
     public void delete(Account account) {
-        entityManager.remove(account);
+        Transaction transaction = session.beginTransaction();
+        session.delete(account);
+        transaction.commit();
     }
 }
+

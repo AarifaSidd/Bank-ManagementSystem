@@ -1,37 +1,107 @@
 package BankingSystem.DAOClasses;
-import BankingSystem.Employee;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import BankingSystem.Entities.Employee;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import javax.persistence.Query;
 import java.util.List;
 
 public class EmployeeDAO {
+    private Session session;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    public void setSession(Session session) {
+        this.session = session;
+    }
 
-    @Transactional
     public void save(Employee employee) {
-        entityManager.persist(employee);
+        Transaction transaction = null;
+        try {
+            if (!session.getTransaction().isActive()) {
+                transaction = session.beginTransaction();
+            }
+            session.save(employee);
+            if (transaction != null) {
+                transaction.commit();
+            }
+        } catch (RuntimeException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
     }
 
     public Employee getById(int id) {
-        return entityManager.find(Employee.class, id);
+        return session.get(Employee.class, id);
     }
+
+//    public List<Employee> getAll() {
+//        Query query = session.createQuery("SELECT e FROM Employee e");
+//        return query.getResultList();
+//    }
+//
+    public void update(Employee employee) {
+        Transaction transaction = null;
+        try {
+            if (!session.getTransaction().isActive()) {
+                transaction = session.beginTransaction();
+            }
+            session.update(employee);
+            if (transaction != null) {
+                transaction.commit();
+            }
+        } catch (RuntimeException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
+    public void delete(Employee employee) {
+        Transaction transaction = null;
+        try {
+            if (!session.getTransaction().isActive()) {
+                transaction = session.beginTransaction();
+            }
+            session.delete(employee);
+            if (transaction != null) {
+                transaction.commit();
+            }
+        } catch (RuntimeException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
+//    public Employee getById(int id) {
+//        return session.get(Employee.class, id);
+//    }
 
     public List<Employee> getAll() {
-        return entityManager.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
+        Query query = session.createQuery("SELECT e FROM Employee e");
+        return query.getResultList();
     }
 
-    @Transactional
-    public void update(Employee employee) {
-        entityManager.merge(employee);
+    public List<Employee> getByBranchId(Session session, int branchId) {
+        Query query = session.createQuery("FROM Employee WHERE branch.id = :branchId", Employee.class);
+        query.setParameter("branchId", branchId);
+        return query.getResultList();
     }
-
-    @Transactional
-    public void delete(Employee employee) {
-        entityManager.remove(employee);
-    }
+//    public void update(Employee employee) {
+//        Transaction transaction = session.beginTransaction();
+//        session.update(employee);
+//        transaction.commit();
+//    }
+//
+//    public void delete(Employee employee) {
+//        Transaction transaction = session.beginTransaction();
+//        session.delete(employee);
+//        transaction.commit();
+//    }
 }
+
 

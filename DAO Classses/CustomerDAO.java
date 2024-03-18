@@ -1,38 +1,71 @@
 package BankingSystem.DAOClasses;
+import BankingSystem.Entities.Customer;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import BankingSystem.Customer;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
 public class CustomerDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final Session session;
+
+    public CustomerDAO(Session session) {
+        this.session = session;
+    }
 
     @Transactional
     public void save(Customer customer) {
-        entityManager.persist(customer);
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.persist(customer);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
     }
 
     public Customer getById(int id) {
-        return entityManager.find(Customer.class, id);
+        return session.find(Customer.class, id);
     }
 
     public List<Customer> getAll() {
-        return entityManager.createQuery("SELECT c FROM Customer c", Customer.class).getResultList();
+        return session.createQuery("SELECT c FROM Customer c", Customer.class).getResultList();
     }
 
     @Transactional
     public void update(Customer customer) {
-        entityManager.merge(customer);
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.merge(customer);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
     }
 
     @Transactional
     public void delete(Customer customer) {
-        entityManager.remove(customer);
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.remove(customer);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
     }
 }
+
 

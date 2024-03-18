@@ -1,4 +1,5 @@
-package  BankingSystem;
+package BankingSystem.Services;
+import BankingSystem.Entities.Bank;
 import BankingSystem.DAOClasses.BankDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

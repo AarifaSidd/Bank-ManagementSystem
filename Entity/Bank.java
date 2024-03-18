@@ -1,4 +1,6 @@
-package BankingSystem;
+package BankingSystem.Entities;
+
+import BankingSystem.Entities.Account;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -111,3 +113,4 @@ public class Bank {
         return branches;
     }
 }
+

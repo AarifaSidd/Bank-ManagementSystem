@@ -1,11 +1,10 @@
-package BankingSystem;
+package BankingSystem.Entities;
 
 import javax.persistence.*;
 
 
-
 @Entity
-public class Account {
+public  class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int accountNo;
@@ -31,6 +30,7 @@ public class Account {
     public int getAccountNo() {
         return accountNo;
     }
+
 
     public void setAccountNo(int accountNo) {
         this.accountNo = accountNo;
@@ -83,6 +83,7 @@ public class Account {
         }
     }
 
+
     public void transfer(Account destinationAccount, double amount) {
         if (balance >= amount) {
             withdraw(amount);
@@ -101,9 +102,12 @@ public class Account {
         this.accountType = accountType;
         System.out.println("Account type updated to " + accountType);
     }
+
+
+    public enum AccountType {
+        SAVINGS,
+        CURRENT
+    }
 }
 
-enum AccountType {
-    SAVINGS,
-    CURRENT
-}
+

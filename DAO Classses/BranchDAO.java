@@ -1,36 +1,66 @@
 package BankingSystem.DAOClasses;
-import BankingSystem.Branch;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import BankingSystem.Entities.Branch;
+import org.hibernate.Session;
 import javax.transaction.Transactional;
 import java.util.List;
 
 public class BranchDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private Session session;
+
+    public BranchDAO(Session session) {
+        this.session = session;
+    }
 
     @Transactional
     public void save(Branch branch) {
-        entityManager.persist(branch);
+        try {
+            session.save(branch);
+        } catch (Exception e) {
+            System.out.println("Error occurred while saving branch details:");
+            e.printStackTrace();
+        }
     }
 
     public Branch getById(int id) {
-        return entityManager.find(Branch.class, id);
+        try {
+            return session.get(Branch.class, id);
+        } catch (Exception e) {
+            System.out.println("Error occurred while fetching branch with ID: " + id);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<Branch> getAll() {
-        return entityManager.createQuery("SELECT b FROM Branch b", Branch.class).getResultList();
+        try {
+            return session.createQuery("FROM Branch", Branch.class).getResultList();
+        } catch (Exception e) {
+            System.out.println("Error occurred while fetching all branches:");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Transactional
     public void update(Branch branch) {
-        entityManager.merge(branch);
+        try {
+            session.merge(branch);
+        } catch (Exception e) {
+            System.out.println("Error occurred while updating branch details:");
+            e.printStackTrace();
+        }
     }
 
     @Transactional
     public void delete(Branch branch) {
-        entityManager.remove(branch);
+        try {
+            session.delete(branch);
+        } catch (Exception e) {
+            System.out.println("Error occurred while deleting branch:");
+            e.printStackTrace();
+        }
     }
 }
+
